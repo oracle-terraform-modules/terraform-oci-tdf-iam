@@ -1,34 +1,46 @@
-# Oracle Cloud Infrastructure (OCI) Terraform IAM Module
+# Oracle Cloud Infrastructure (OCI) IAM Module for Terraform
 
 ## Introduction
 
-This module helps you in orchestrating IAM resources into different IAM topologies.
-In the examples section you'll also find an example about orchestrating the OCI IAM TF submodules into more complex functionality.
+This module helps you orchestrating IAM resources into different IAM topologies.
   
 
 ## Solution
 
-This module assists you in orchestrating the OCI IAM TF submodules into more complex functionality.
+This module assists you in orchestrating the OCI IAM TF sub-modules into more complex functionality.
 
-The module covers the following usecase:
+The module covers the following use case:
 
 * Creating compartments, users, groups, dynamic groups and policies that we will those IAM objects.
 
-### Prerequisites
-This module does not create any dependencies or prerequisites (these must be created prior to using this module):
+## Prerequisites
+This module does not create any dependencies or prerequisites :
 
-* Mandatory(needs to exist before creating the IAM resources)
+Create the following before using this module: 
   * Required IAM construct to allow for the creation of resources
 
-### Module inputs
+## Getting Started
 
-#### `providers`
+One fully-functional examples have been provided in the `examples` directory.  
 
-* This module supports custom provider. This is provided as when creating IAM resources you need to do this against the tenancy home region which might be different then the region used by the rest of your automation project. In the examples sections we're querrying the home region by using the default provider and, in this way, calculating the home region provider.
+The scenarios covered in the examples section are:
+* Creating compartments, users, groups, dynamic groups and policies that we will those IAM objects.  
+
+## Accessing the Solution
+
+This is a core service module that is foundational to many other resources in OCI, so there is really nothing to directly access.
+
+
+## Module inputs
+
+### Provider
+
+This module supports a custom provider. With a custom provider, IAM resources must be deployed in your home tenancy, which might be different from the region that will contain other deployments. 
 
 You'll be managing those providers in the tf automation projects where you reference this module.
 
 Example:
+
 
 ```
 provider "oci" {
@@ -51,35 +63,49 @@ provider "oci" {
 data "oci_identity_region_subscriptions" "this" {
   tenancy_id = var.tenancy_id
 }
-
 ```
 
-* Bellow you can find the IAM attributes provided in the the `terraform.tfvars` file:
+The following IAM attributes are available in the the `terraform.tfvars` file:
 
 ```
-### TENANCY DETAILS
+### PRIMARY TENANCY DETAILS
 
 # Get this from the bottom of the OCI screen (after logging in, after Tenancy ID: heading)
-tenancy_id="<tenancy OCID"
+primary_tenancy_id="<tenancy OCID"
 # Get this from OCI > Identity > Users (for your user account)
-user_id="<user OCID>"
+primary_user_id="<user OCID>"
 
 # the fingerprint can be gathered from your user account (OCI > Identity > Users > click your username > API Keys fingerprint (select it, copy it and paste it below))
-fingerprint="<PEM key fingerprint>"
+primary_fingerprint="<PEM key fingerprint>"
 # this is the full path on your local system to the private key used for the API key pair
-private_key_path="<path to the private key that matches the fingerprint above>"
+primary_private_key_path="<path to the private key that matches the fingerprint above>"
 
 # region (us-phoenix-1, ca-toronto-1, etc)
-region="<your home region>"
+primary_region="<your region>"
 
+### DR TENANCY DETAILS
+
+# Get this from the bottom of the OCI screen (after logging in, after Tenancy ID: heading)
+dr_tenancy_id="<tenancy OCID"
+# Get this from OCI > Identity > Users (for your user account)
+dr_user_id="<user OCID>"
+
+# the fingerprint can be gathered from your user account (OCI > Identity > Users > click your username > API Keys fingerprint (select it, copy it and paste it below))
+dr_fingerprint="<PEM key fingerprint>"
+# this is the full path on your local system to the private key used for the API key pair
+dr_private_key_path="<path to the private key that matches the fingerprint above>"
+
+# region (us-phoenix-1, ca-toronto-1, etc)
+dr_region="<your region>"
 ```
-#### `compartments`
-
-* compartments input variable represents a map containing a collection of compartments. Each compartment object specifies the  attributes for a compartment, including the parrent compartment.
 
 
-  * The automation creates the following resources with the following attributes:
-    * `oci_identity_compartment.compartments`:
+### Compartments
+
+Compartments input variable represents a map containing a collection of compartments. Each compartment object specifies the  attributes for a compartment, including the parent compartment.
+
+
+**`oci_identity_compartment.compartments`**
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
@@ -91,9 +117,9 @@ region="<your home region>"
 | define\_tags | map(string) | no | N/A (no default) | The defined tags.
 | freeform\_tags| map(string) | no | N/A (no default) | The freeform\_tags.
 
-#### `users_and_groups`
+### Users and Groups
 
-  * `oci_identity_group.groups`:
+**`oci_identity_group.groups`**
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
@@ -105,7 +131,7 @@ region="<your home region>"
 | define\_tags | map(string) | no | N/A (no default) | The defined tags.
 | freeform\_tags| map(string) | no | N/A (no default) | The freeform\_tags.
 
- * `oci_identity_user.users`:
+**`oci_identity_user.users`**
   
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
@@ -120,7 +146,7 @@ region="<your home region>"
 | email | string | no | N/A (no default) | The provided email |
 
 
-  * `oci_identity_user_group_membership.users_groups_membership`:
+**`oci_identity_user_group_membership.users_groups_membership`**
   
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
@@ -130,13 +156,11 @@ region="<your home region>"
 | group\_id | string | yes | none | OCID of the group created above | OCID of the group created above|
 | user\_id | string | yes | none | OCID of the user created above | OCID of the user created above |
 
-#### `dynamic_groups`
+### Dynamic_groups
 
-* dynamic_groups input variable represents a map containing a collection of dynamic groups. Each dynamic goroup specifies the  attributes for a dynamic group, including a list of coresponding instances.
+Dynamic_groups input variable represents a map containing a collection of dynamic groups. Each dynamic group specifies the attributes for a dynamic group, including a list of corresponding instances.
 
-
-  * The automation creates the following resources with the following attributes:
-    * `oci_identity_dynamic_group.dynamic_groups`:
+**`oci_identity_dynamic_group.dynamic_groups`**
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
@@ -149,13 +173,12 @@ region="<your home region>"
 | define\_tags | map(string) | no | N/A (no default) | The defined tags.
 | freeform\_tags| map(string) | no | N/A (no default) | The freeform\_tags.
 
-#### `policies`
+### Policies
 
-* policies input variable represents a map containing a collection of policies. Each policy specifies the  attributes for a policy, including a list of statements.
+Policies input variable represents a map containing a collection of policies. Each policy specifies the attributes for a policy, including a list of statements.
 
 
-  * The automation creates the following resources with the following attributes:
-    * `oci_identity_policy.policies`:
+**`oci_identity_policy.policies`**
 
 | Attribute | Data Type | Required | Default Value | Valid Values | Description |
 |---|---|---|---|---|---|
@@ -169,10 +192,10 @@ region="<your home region>"
 | freeform\_tags| map(string) | no | N/A (no default) | The freeform\_tags.
 | version\_date| string | no | Current date | The version of the policy.
 
-### Solution inputs
 
-Example:
+**Example**
 
+The following example creates 1 compartment, 1 group, 2 users, and 2 dynamic groups
 ```
 # IAM Config Variable
 
@@ -234,40 +257,35 @@ iam_config = {
 
 ```
 
-### Outputs
+## Outputs
 
-The module outputs returns a mps of created artifacts: compartments, users_and_groups, dynamic_groups and policies.
+This module is returning 1 map object:
 
-## Getting Started
-
-One fully-functional examples have been provided in the `examples` directory.  
-
-The scenarios covered in the examples section are:
-* Creating compartments, users, groups, dynamic groups and policies that we will those IAM objects.
-
-## Accessing the Solution
-
-This is a core service module that is foundational to many other resources in OCI, so there is really nothing to directly access.
-
-## Summary
-
-This module assists you in orchestrating the OCI IAM TF resources and submodules into more complex functionality.
+* `compartments` : Contains the details about each compartment
+* `users_and_groups` : Contains the details about each group and its relationship with users
+* `dynamic_groups` : Contains the details about each dynamic group
+* `Policies` : Contains the details about each policy.
 
 ## Notes/Issues
+
+## URLs
+
+For Oracle Cloud Infrastructure IAM documentation, see https://docs.cloud.oracle.com/en-us/iaas/Content/Identity/Concepts/overview.htm
+ 
+## Versions
+
+This module has been developed and tested by running terraform on Oracle Linux Server release 7.7 
+
+```
+user-linux$ terraform --version
+Terraform v0.12.19
++ provider.oci v3.58.0
+
+```
 
 ## Contributing
 
 This project is open source. Oracle appreciates any contributions that are made by the open source community.
-
-## Versions
-
-This module has been developed and tested by running terraform on macOS Mojave Version 10.14.5
-
-```
-user-mac$ terraform --version
-Terraform v0.12.3
-+ provider.oci v3.31.0
-```
 
 ## License
 
