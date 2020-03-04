@@ -11,7 +11,7 @@ This module assists you in orchestrating the OCI IAM TF sub-modules into more co
 
 The module covers the following use case:
 
-* Creating compartments, users, groups, dynamic groups and policies that we will those IAM objects.
+* Create compartments, users, groups, dynamic groups and policies that will be use as IAM objects.
 
 ## Prerequisites
 This module does not create any dependencies or prerequisites :
@@ -24,7 +24,7 @@ Create the following before using this module:
 One fully-functional examples have been provided in the `examples` directory.  
 
 The scenarios covered in the examples section are:
-* Creating compartments, users, groups, dynamic groups and policies that we will those IAM objects.  
+* Create compartments, users, groups, dynamic groups and policies that will be use as IAM objects.  
 
 ## Accessing the Solution
 
